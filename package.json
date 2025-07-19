@@ -1,6 +1,11 @@
 {
-  "name": "Example-Plugin",
+  "name": "ExamplePlugin",
   "packageManager": "yarn@4.9.1",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c --watch"
+  },
+  "main": "src/ExamplePlugin.ts",
   "devDependencies": {
     "@highlite/plugin-api": "^1.0.4",
     "@rollup/plugin-node-resolve": "^16.0.1",

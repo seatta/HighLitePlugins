@@ -1,22 +1,24 @@
 import typescript from '@rollup/plugin-typescript';
-import css from 'rollup-plugin-import-css';``
 import { string } from 'rollup-plugin-string';
 import url from '@rollup/plugin-url';
 import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
+
+import pkgJson from './package.json' with { type: 'json' };
+
 export default {
-    input: 'src/ExamplePlugin.ts',
+    input: `${pkgJson.main}`,
     output: {
-        file: 'dist/bundle.js',
-        format: 'cjs'
+        file: `dist/${pkgJson.name}.js`,
+        name: `${pkgJson.name}`,
+        format: 'umd',
     },
     plugins: [
         typescript(),
         nodeResolve(),
-        css(),
         string({
-            include: "**/*.html"
+            include: ["**/*.html", "**/*.css"]
         }),
         replace({
             preventAssignment: true,

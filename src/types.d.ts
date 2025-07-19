@@ -37,9 +37,7 @@ declare module "*.wav" {
 }
 
 declare module "*.css" {
-  const value: {
-    [className: string]: string;
-  };
+  const value: string;
   export default value;
 }
 
