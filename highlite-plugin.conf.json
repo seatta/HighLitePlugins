@@ -1,0 +1,19 @@
+{
+    "name": "Example Plugin",
+    "version": "1.0.0",
+    "description": "An example plugin for Highlite",
+    "author": "Your Name",
+    "license": "GPL-3.0-or-later",
+    "resources": {
+        "css": [
+            "../resources/css/base.css"
+        ],
+        "images": [
+            "../resources/images/image.png"
+        ],
+        "sounds": [
+            "../resources/sounds/sound.mp3"
+        ]
+    }
+
+}
