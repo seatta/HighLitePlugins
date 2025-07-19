@@ -13,6 +13,7 @@ export default {
         file: `dist/${pkgJson.name}.js`,
         name: `${pkgJson.name}`,
         format: 'umd',
+        exports: 'named',
     },
     plugins: [
         typescript(),

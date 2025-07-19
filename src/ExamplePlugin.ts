@@ -6,7 +6,7 @@ import styles from "../resources/css/base.css";
 import img from "../resources/images/image.png";
 import snd from "../resources/sounds/Middlefern.mp3";
 
-export default class ExamplePlugin extends Plugin {
+class ExamplePlugin extends Plugin {
     pluginName = "ExamplePlugin";
     author: string = "Your Name";
 
@@ -31,3 +31,7 @@ export default class ExamplePlugin extends Plugin {
         this.log("ExamplePlugin stopped");
     }
 }
+
+// Export both as default and named export for maximum compatibility
+export default ExamplePlugin;
+export { ExamplePlugin };
