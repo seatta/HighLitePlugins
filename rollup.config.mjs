@@ -12,8 +12,8 @@ export default {
     output: {
         file: `dist/${pkgJson.name}.js`,
         name: `${pkgJson.name}`,
-        format: 'umd',
-        exports: 'named',
+        format: 'esm', // ECMAScript Module format
+        exports: 'auto'
     },
     plugins: [
         typescript(),
