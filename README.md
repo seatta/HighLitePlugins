@@ -161,6 +161,7 @@ To customize this template for your own plugin:
 2. **Update package.json**: 
    - Change the `name` field to match your plugin name (e.g., `"YourPluginName"`)
    - Update the `main` field if you rename the main TypeScript file (e.g., `"src/YourPluginName.ts"`)
+   - Rerun `yarn install` to make the worksapce properly recognize the new package name
 3. **Replace the HTML content** in `resources/html/html.html`
 4. **Modify styles** in `resources/css/base.css`
 5. **Add your own images and audio files** to the respective directories
