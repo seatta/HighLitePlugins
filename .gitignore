@@ -1,3 +1,7 @@
+# Code Editor Folders
+.idea/
+.vscode/
+
 # Logs
 logs
 *.log
