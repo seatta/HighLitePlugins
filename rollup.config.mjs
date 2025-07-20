@@ -1,7 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import { string } from 'rollup-plugin-string';
 import url from '@rollup/plugin-url';
-import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 
@@ -16,16 +15,12 @@ export default {
         exports: 'auto'
     },
     plugins: [
-        typescript(),
+        typescript({
+            tsconfig: './tsconfig.json', // Specify your TypeScript configuration file
+        }),
         nodeResolve(),
         string({
             include: ["**/*.html", "**/*.css"]
-        }),
-        replace({
-            preventAssignment: true,
-            values: {
-                'process.env.PLUGIN_VERSION': JSON.stringify('1.0.0') // Replace with your plugin version
-            }
         }),
         url({
             include: ["**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.svg", "**/*.webp"],
