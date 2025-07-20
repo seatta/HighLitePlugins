@@ -9,7 +9,7 @@ A template repository for creating plugins for the HighLite client. This templat
 
 ### Prerequisites
 
-- Node.js (v16 or higher recommended)
+- Node.js (v22 or higher recommended)
 - Yarn package manager (v4.9.1 or compatible)
 
 ### Installation
@@ -56,8 +56,7 @@ Example-Plugin/
 │   ├── images/
 │   │   └── image.png       # Example image asset
 │   └── sounds/
-│       ├── Middlefern.mp3  # Example audio files
-│       └── sound.mp3
+│       └── sound.mp3       # Exammple audio asset
 ├── package.json            # Project configuration and dependencies
 ├── rollup.config.mjs       # Build configuration
 ├── tsconfig.json          # TypeScript configuration
@@ -152,9 +151,7 @@ The `types.d.ts` file provides TypeScript support for importing static resources
 ### Development Tips
 
 1. **Resource Management**: Keep resource files organized in the `resources/` directory
-2. **Type Safety**: Use the provided type declarations for static resource imports
-3. **Build Optimization**: Adjust file size limits in `rollup.config.mjs` based on your needs
-4. **Debugging**: Use the `this.log()` method for development debugging
+2. **Debugging**: Use the `this.log()` method for development debugging
 
 ### Customization
 
@@ -169,6 +166,54 @@ To customize this template for your own plugin:
 5. **Add your own images and audio files** to the respective directories
 6. **Implement your plugin logic** in the lifecycle methods
 7. **Update this README** to describe your specific plugin functionality
+
+## Testing Plugins
+
+Testing your plugin locally is essential before publishing to the Plugin Hub. HighLite provides a convenient way to test plugins without going through the remote distribution process.
+
+### Local Testing Setup
+
+1. **Clone HighLiteDesktop**:
+   ```bash
+   git clone https://github.com/Highl1te/HighLiteDesktop.git
+   cd HighLiteDesktop
+   ```
+
+2. **Build your plugin**:
+   Navigate back to your plugin directory and build it:
+   ```bash
+   cd /path/to/your/plugin
+   yarn build
+   ```
+
+3. **Copy the built plugin**:
+   Copy your built plugin file to the HighLite plugins directory:
+   ```bash
+   cp dist/ExamplePlugin.js /path/to/HighLiteDesktop/src/renderer/client/highlite/plugins/
+   ```
+
+### Testing Guidelines
+
+- **Plugin Location**: Place any built plugin (e.g., `PluginName.js`) in `HighliteDesktop/src/renderer/client/highlite/plugins/`
+- **Automatic Loading**: Plugins in this directory are automatically loaded by the client
+- **Name Conflicts**: If testing an existing Plugin Hub plugin, temporarily use a different name to avoid conflicts with the remotely pulled version
+- **Hot Reloading**: After making changes, rebuild your plugin and replace the file in the plugins directory
+
+### Testing Workflow
+
+1. Make changes to your plugin code
+2. Run `yarn build` to create the updated plugin file
+3. Copy the new build to the HighLite plugins directory
+4. Restart HighLite to load the updated plugin
+5. Test your plugin functionality
+6. Repeat as needed
+
+### Debugging Tips
+
+- Use `this.log()` method in your plugin for debugging output
+- Check the HighLite console for any error messages
+- Verify your plugin follows the correct lifecycle methods (`init()`, `start()`, `stop()`)
+- Ensure all static resources are properly bundled and accessible
 
 ## License
 
