@@ -1,5 +1,10 @@
-#main {
-    background-color: #f0f0f0;
-    padding: 20px;
-    border: 1px solid #ccc;
+@scope {
+    #example_plugin_div {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    #example_plugin_div img {
+        width: 100%
+    }
 }
