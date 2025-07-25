@@ -45,7 +45,7 @@ async function findPackageJsons(dir) {
                 }
 
                 builds.push({
-                    name: entry.name,
+                    name: pkg.name,
                     entryPoint: path.join(subdir, pkg.main),
                     outdir: DIST_DIR,
                 });
