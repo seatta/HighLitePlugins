@@ -1,3 +1,4 @@
 {
+    "name": "Example-Plugin",
     "main": "Example-Plugin.ts"
 }
