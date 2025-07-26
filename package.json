@@ -3,13 +3,13 @@
         "node": ">=22.0.0"
     },
     "devDependencies": {
-        "@highlite/plugin-api": "^1.0.13",
+        "@highlite/plugin-api": "^1.0.15",
         "esbuild": "^0.25.8",
         "typescript": "^5.8.3"
     },
     "scripts": {
         "build": "node build.mjs"
     },
-    "packageManager": "yarn@4.9.1",
+    "packageManager": "yarn@4.9.2",
     "type": "module"
 }
