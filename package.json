@@ -11,5 +11,8 @@
         "build": "node build.mjs"
     },
     "packageManager": "yarn@4.9.2",
-    "type": "module"
+    "type": "module",
+    "resolutions": {
+        "@highlite/plugin-api": "portal:../Core"
+    }
 }
