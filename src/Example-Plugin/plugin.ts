@@ -5,9 +5,12 @@ import ExampleCSS from "./resources/css/base.css";
 import ExampleImage from "./resources/images/icon.png";
 import ExampleSound from "./resources/sounds/sample.mp3";
 
+// This version string is used only when building to append the version number to the built filename
+const version: string = "0.0.1";
+
 export default class ExamplePlugin extends Plugin {
     panelManager: PanelManager = new PanelManager();
-    pluginName = "ExamplePlugin2";
+    pluginName = "ExamplePlugin";
     author: string = "Seatta";
 
     constructor() {
@@ -31,8 +34,8 @@ export default class ExamplePlugin extends Plugin {
 
         // Create Panel
         let panelItems: HTMLElement[] = this.panelManager.requestMenuItem(
-            "⚡️",
-            "Example Plugin"
+            "1",
+            "Example Plugin 1"
         );
 
         // Example HTML Inclusion
