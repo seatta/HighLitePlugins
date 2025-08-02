@@ -148,3 +148,6 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Ignore test plugins (anything beginning with test)
+src/[Tt][Ee][Ss][Tt]*
