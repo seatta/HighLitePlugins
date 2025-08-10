@@ -1,7 +1,7 @@
 import * as esbuild from "esbuild";
 import fs from "fs/promises";
 import path from "path";
-import { fileURLToPath } from "url";
+import {fileURLToPath} from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,13 +11,13 @@ const DIST_DIR = path.join(__dirname, "dist");
 const CSSMinifyPlugin = {
     name: "CSSMinifyPlugin",
     setup(build) {
-        build.onLoad({ filter: /\.css$/ }, async (args) => {
+        build.onLoad({filter: /\.css$/}, async (args) => {
             const f = await fs.readFile(args.path);
             const css = await esbuild.transform(f, {
                 loader: "css",
                 minify: true,
             });
-            return { loader: "text", contents: css.code };
+            return {loader: "text", contents: css.code};
         });
     },
 };
@@ -28,7 +28,7 @@ const CSSMinifyPlugin = {
  * @returns
  */
 async function findPackageJsons(dir) {
-    const entries = await fs.readdir(dir, { withFileTypes: true });
+    const entries = await fs.readdir(dir, {withFileTypes: true});
     const builds = [];
 
     for (const entry of entries) {
@@ -59,7 +59,7 @@ async function findPackageJsons(dir) {
 
 const builds = await findPackageJsons(SRC_DIR);
 await Promise.all(
-    builds.map(async ({ name, entryPoint, outdir }) => {
+    builds.map(async ({name, entryPoint, outdir}) => {
         // Get version directly from the entryPoint file
         const source = await fs.readFile(entryPoint, "utf-8");
         const match = source.match(
@@ -91,7 +91,7 @@ await Promise.all(
             return;
         }
 
-        let versionedOutputFile = `${name.toLowerCase()}_v${extractedVersion}.js`;
+        let versionedOutputFile = `_${name.toLowerCase()}_v${extractedVersion}.js`;
         const outfile = path.join(outdir, versionedOutputFile);
 
         try {
@@ -99,7 +99,7 @@ await Promise.all(
                 entryPoints: [entryPoint],
                 bundle: true,
                 minify: false,
-                outExtension: { ".js": ".js" },
+                outExtension: {".js": ".js"},
                 outfile,
                 format: "esm",
                 plugins: [CSSMinifyPlugin],
