@@ -62,37 +62,9 @@ await Promise.all(
     builds.map(async ({name, entryPoint, outdir}) => {
         // Get version directly from the entryPoint file
         const source = await fs.readFile(entryPoint, "utf-8");
-        const match = source.match(
-            /const\s+version\s*(?::\s*\w+)?\s*=\s*["'`](.*?)["'`]/
-        );
 
-        // Check if a version const was declared in the plugin.ts
-        if (!match) {
-            console.error(
-                `❌ Skipping build: No 'const version' declaration found in ${path.relative(
-                    process.cwd(),
-                    entryPoint
-                )}. \n      Add a line like: const version: string = "1.2.3";`
-            );
-
-            return;
-        }
-
-        // Ensure that the extracted version string is a valid semver version
-        const extractedVersion = match[1];
-        if (!isValidSemver(extractedVersion)) {
-            console.error(
-                `❌ Skipping build: Invalid version "${extractedVersion}" found in ${path.relative(
-                    process.cwd(),
-                    entryPoint
-                )}. \n      Ensure the file defines a valid semver string like "1.2.3" in a 'const version' declaration.`
-            );
-
-            return;
-        }
-
-        let versionedOutputFile = `_${name.toLowerCase()}_v${extractedVersion}.js`;
-        const outfile = path.join(outdir, versionedOutputFile);
+        let outName = `_${name.toLowerCase()}.js`;
+        const outfile = path.join(outdir, outName);
 
         try {
             await esbuild.build({
@@ -117,9 +89,9 @@ await Promise.all(
                 },
             });
             const outString = `"${path.relative(process.cwd(), outfile)}"`;
-            console.log(`✅ Built ${name}_v${extractedVersion} → ${outString}`);
+            console.log(`✅ Built ${name} → ${outString}`);
         } catch (err) {
-            console.error(`❌ Build failed for "${versionedOutputFile}":`, err);
+            console.error(`❌ Build failed for "${name}":`, err);
             process.exitCode = 1;
         }
     })
