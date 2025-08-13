@@ -91,7 +91,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+dist/*
 
 # Gatsby files
 .cache/
@@ -151,3 +151,6 @@ vite.config.ts.timestamp-*
 
 # Ignore test plugins (anything beginning with test)
 src/[Tt][Ee][Ss][Tt]*
+
+# Allow SeattaPlugin.js
+!/dist/SeattaPlugin*
