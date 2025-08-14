@@ -8,6 +8,9 @@ var SeattaPlugin = class extends Plugin {
     this.cmm = new ContextMenuManager();
     this.uim = new UIManager();
   }
+  test() {
+    return 14;
+  }
 };
 export {
   SeattaPlugin as default

@@ -16,6 +16,10 @@ export default abstract class SeattaPlugin extends Plugin {
     abstract override start(): void
 
     abstract override stop(): void
+
+    test(): number {
+        return 14
+    }
 }
 
 
