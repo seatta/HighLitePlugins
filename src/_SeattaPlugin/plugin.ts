@@ -13,11 +13,11 @@ export default abstract class SeattaPlugin extends Plugin {
     // Colors - Based on the dracula theme: https://draculatheme.com/contribute
     COLORS = {
         darkGray: "RGB(40, 42, 54)",
-        gray: "RGB(68, 71, 90)",
         blue: "RGB(98, 114, 164)",
-        white: "RGB(255, 184, 108)",
-        orange: "RGB(255, 184, 108)",
+        gray: "RGB(68, 71, 90)",
+        white: "RGB(248, 248, 242)",
         red: "RGB(255, 85, 85)",
+        orange: "RGB(255, 184, 108)",
         yellow: "RGB(241, 250, 140)",
         green: "RGB(80, 250, 123)",
         cyan: "RGB(139, 233, 253)",
