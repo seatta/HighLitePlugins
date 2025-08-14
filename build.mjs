@@ -88,14 +88,12 @@ async function getPlugins(dir) {
 const builds = await getPlugins(SRC_DIR);
 await Promise.all(
     builds.map(async ({name, entryPoint, outDir}) => {
+        // Early return because we don't need to build SeattaPlugin.
+        // It will be bundled with any plugins that need it
+        if (name.includes("SeattaPlugin")) return
+
         let outName = `_${name.toLowerCase()}.js`;
 
-        // Reassign output variables so the SeattaPlugin superclass doesn't appear in highlite dev
-        if (name.includes("SeattaPlugin")) {
-            name = "SeattaPlugin"
-            outDir = `${DIST_DIR}/..`
-            outName = `SeattaPlugin.js`;
-        }
 
         const outfile = path.join(outDir, outName);
 
