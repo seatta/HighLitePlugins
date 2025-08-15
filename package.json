@@ -3,7 +3,7 @@
         "node": ">=22.0.0"
     },
     "devDependencies": {
-        "@highlite/plugin-api": "^1.0.15",
+        "@highlite/core": "^1.0.15",
         "esbuild": "^0.25.8",
         "typescript": "^5.8.3"
     },
@@ -13,6 +13,6 @@
     "packageManager": "yarn@4.9.2",
     "type": "module",
     "resolutions": {
-        "@highlite/plugin-api": "portal:../Core"
+        "@highlite/core": "portal:../Core"
     }
 }

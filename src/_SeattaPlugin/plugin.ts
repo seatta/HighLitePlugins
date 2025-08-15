@@ -1,4 +1,9 @@
-import {Plugin, PanelManager, ContextMenuManager, UIManager,} from "@highlite/plugin-api";
+import {
+    Plugin,
+    PanelManager,
+    ContextMenuManager,
+    UIManager,
+} from "@highlite/core";
 
 // Experimental superclass for my plugins!
 export default abstract class SeattaPlugin extends Plugin {
