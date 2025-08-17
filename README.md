@@ -9,7 +9,6 @@ the [Highlite Example Plugin Template][example-plugin-repo]
 
 ## Plugins
 
----
 <details><summary> 
 ClientThemes - Restyle your HighLite client
 
@@ -26,7 +25,6 @@ Supports creation, exporting, and exporting of user-defined themes as well as cu
 
 ## Information
 
----
 <details><summary>Project Structure
 
 ---
