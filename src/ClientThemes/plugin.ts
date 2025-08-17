@@ -29,7 +29,7 @@ export default class ClientThemes extends SeattaPlugin {
             type: SettingsTypes.checkbox,
             value: false,
             callback: () =>
-                this.updateCustomTheme(this.settings.isCustomDarkMode!.value as boolean, null, null)
+                this.updateCustomTheme(this.settings.isCustomDarkMode!.value as boolean, null, null, true)
         }
         this.settings.customBackgroundColor = {
             text: "Background Color",
@@ -39,7 +39,7 @@ export default class ClientThemes extends SeattaPlugin {
             callback: () => {
                 this.updateCustomTheme(this.settings.isCustomDarkMode!.value as boolean,
                     "--theme-background",
-                    this.settings.customBackgroundColor!.value as string)
+                    this.settings.customBackgroundColor!.value as string, true)
             }
         }
         this.settings.customAccentColor = {
@@ -50,7 +50,7 @@ export default class ClientThemes extends SeattaPlugin {
             callback: () => {
                 this.updateCustomTheme(this.settings.isCustomDarkMode!.value as boolean,
                     "--theme-accent",
-                    this.settings.customAccentColor!.value as string)
+                    this.settings.customAccentColor!.value as string, true)
             }
         }
         this.settings.customPrimaryTextColor = {
@@ -61,7 +61,7 @@ export default class ClientThemes extends SeattaPlugin {
             callback: () => {
                 this.updateCustomTheme(this.settings.isCustomDarkMode!.value as boolean,
                     "--theme-text-primary",
-                    this.settings.customPrimaryTextColor!.value as string)
+                    this.settings.customPrimaryTextColor!.value as string, true)
             }
         }
         this.settings.customAltTextColor = {
@@ -72,7 +72,7 @@ export default class ClientThemes extends SeattaPlugin {
             callback: () => {
                 this.updateCustomTheme(this.settings.isCustomDarkMode!.value as boolean,
                     "--theme-text-dark",
-                    this.settings.customAltTextColor!.value as string)
+                    this.settings.customAltTextColor!.value as string, true)
             }
         }
         this.settings.customSuccessColor = {
@@ -83,7 +83,7 @@ export default class ClientThemes extends SeattaPlugin {
             callback: () => {
                 this.updateCustomTheme(this.settings.isCustomDarkMode!.value as boolean,
                     "--theme-success",
-                    this.settings.customSuccessColor!.value as string)
+                    this.settings.customSuccessColor!.value as string, true)
             }
         }
         this.settings.customDangerColor = {
@@ -94,7 +94,28 @@ export default class ClientThemes extends SeattaPlugin {
             callback: () => {
                 this.updateCustomTheme(this.settings.isCustomDarkMode!.value as boolean,
                     "--theme-danger",
-                    this.settings.customDangerColor!.value as string)
+                    this.settings.customDangerColor!.value as string, true)
+            }
+        }
+
+        this.settings.exportThemeToClipboard = {
+            text: "Export custom theme to clipboard",
+            description: "Copy your custom theme values to the clipboard",
+            type: SettingsTypes.button,
+            value: "",
+            callback: () => this.exportThemeToClipboard()
+        }
+        this.settings.importThemeFromClipboard = {
+            text: "Import custom theme from clipboard",
+            description: "Overwrite a custom theme with values from the clipboard",
+            type: SettingsTypes.button,
+            value: "",
+            callback: () => {
+                this.importThemeFromClipboard().then();
+                if (this.isCustomThemeSet()) {
+                    Theme.getByName("Default")!.apply()
+                    Theme.getByName("Custom")!.apply()
+                }
             }
         }
 
@@ -103,22 +124,90 @@ export default class ClientThemes extends SeattaPlugin {
             description: "Add some custom css here",
             type: SettingsTypes.textarea,
             value: "",
-            callback: () =>
-                this.addCustomCssStyle(this.settings.customCSS!.value as string)
+            callback: () => {
+                this.addCustomCssStyle(this.settings.customCSS!.value as string);
+            }
         }
     }
 
-    updateCustomTheme(isDarkMode: boolean, themeProperty: string | null, propertyValue: string | null) {
+    /**
+     * Exports the current custom theme to the clipboard
+     */
+    exportThemeToClipboard(): void {
+        let t = Theme.getByName("Custom")!;
+        let themeString = `{
+    "isDarkMode": \"${t.isDarkModeTheme}\",
+    "--theme-background": \"${t.highliteColors["--theme-background"]}\",
+    "--theme-accent": \"${t.highliteColors["--theme-accent"]}\",
+    "--theme-text-primary": \"${t.highliteColors["--theme-text-primary"]}\",
+    "--theme-text-dark":\"${t.highliteColors["--theme-text-dark"]}\",
+    "--theme-success": \"${t.highliteColors["--theme-success"]}\",
+    "--theme-danger": \"${t.highliteColors["--theme-danger"]}\"
+}`
+        navigator.clipboard.writeText(themeString).then(() => {
+            this.log("Exported custom theme to clipboard");
+        }).catch(err => this.log(`Failed to export custom theme to clipboard: ${err}`))
+    }
+
+    /**
+     * Overwrites the current custom theme with one from the clipboard if valid
+     */
+    async importThemeFromClipboard() {
+        try {
+            const clipboardText = await navigator.clipboard.readText();
+            const themeData: { isDarkMode: string, [key: string]: string } = JSON.parse(clipboardText);
+
+            const container = document.getElementById("highlite-settings-content-row-holder")!;
+            const darkModeCheckbox = container.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+            darkModeCheckbox.checked = themeData["isDarkMode"] === "true";
+            darkModeCheckbox.dispatchEvent(new Event("change", {bubbles: true}));
+
+            const colorVariables = [
+                "--theme-background",
+                "--theme-accent",
+                "--theme-text-primary",
+                "--theme-text-dark",
+                "--theme-success",
+                "--theme-danger"
+            ]
+
+            const colorInputs = container.querySelectorAll<HTMLInputElement>('input[type="color"]');
+            for (let i = 0; i < colorInputs.length; i++) {
+                colorInputs[i].value = themeData[colorVariables[i]];
+                colorInputs[i].dispatchEvent(new Event("change", {bubbles: true}));
+            }
+
+            if (this.isCustomThemeSet()) Theme.getByName("Custom")?.apply()
+
+            this.log("Imported custom theme from clipboard")
+        } catch (err) {
+            this.log("Failed to import custom theme from clipboard")
+        }
+    }
+
+    /**
+     * Update a value for the custom theme
+     *
+     * @param isDarkMode boolean -- Whether the theme is a dark mode theme
+     * @param themeProperty string | null -- The theme property to update
+     * @param propertyValue string | null -- The value to set for themeProperty
+     * @param applyAfter boolean -- Whether to apply the theme afterward.
+     * Only applies if the current theme is set to the Custom theme
+     */
+    updateCustomTheme(isDarkMode: boolean, themeProperty: string | null, propertyValue: string | null, applyAfter: boolean) {
         let customTheme = Theme.getByName("Custom")!;
         customTheme.isDarkModeTheme = isDarkMode;
 
-        if (themeProperty && propertyValue) {
-            customTheme.highliteColors[themeProperty] = propertyValue;
-        }
-        if (this.settings.CurrentTheme!.value as string === "Custom") customTheme.apply()
+        if (themeProperty && propertyValue) customTheme.highliteColors[themeProperty] = propertyValue;
+        if (applyAfter && this.isCustomThemeSet()) Theme.getByName("Custom")?.apply();
+
     }
 
-
+    /**
+     * Appends a custom style element to <head>
+     *
+     * @param value string -- The style information to set
+     */
     addCustomCssStyle(value: string) {
         let customOverrides: HTMLElement | null = document.getElementById("custom-overrides");
         if (!customOverrides) {
@@ -131,6 +220,16 @@ export default class ClientThemes extends SeattaPlugin {
         customOverrides.textContent = `${value}`
     }
 
+    /**
+     * Returns whether the custom theme is currently set
+     */
+    isCustomThemeSet(): boolean {
+        return this.settings.CurrentTheme!.value as string === "Custom";
+    }
+
+    /**
+     * Read custom theme data from settings, or initialize them with preset values
+     */
     populateCustomTheme() {
         let customTheme = Theme.getByName("Custom")!;
         customTheme.highliteColors = {
@@ -176,7 +275,7 @@ class Theme {
     }
 
     static readonly THEMES: Record<string, Theme> = {
-        // The default HighLite theme - Colors don't need to be defined since we'll remove the theme-overrides element
+        // The default HighLite theme - Colors don't need to be defined since we'll remove the .theme-overrides element
         Default: new Theme("Default", true),
         Catppuccin_Dark: new Theme("Catppuccin - Dark", true, {
             "--theme-background": "#303446",
@@ -186,7 +285,7 @@ class Theme {
             "--theme-success": "#a6da95",
             "--theme-danger": "#ed8796",
         }),
-        Catppuccin: new Theme("Catppuccin - Light", false, {
+        Catppuccin_Light: new Theme("Catppuccin - Light", false, {
             "--theme-background": "#eff1f5",
             "--theme-accent": "#1e66f5",
             "--theme-text-primary": "#4c4f69",
@@ -230,6 +329,7 @@ class Theme {
 
     /**
      * Returns a ThemeColors object of clientColors based on highliteColors
+     * This is used to override client color variables
      */
     getClientColorsFromHighliteColors(): ThemeColors {
         return {
@@ -242,6 +342,7 @@ class Theme {
         };
     }
 
+    /** Applies the theme by appending it as a style element to <head>*/
     apply() {
         let themeOverrides: HTMLElement | null = document.getElementById("theme-overrides");
 
@@ -256,7 +357,7 @@ class Theme {
                 document.head.appendChild(themeOverrides);
             }
 
-            // Set the theme-overrides text to custom style blocks built from our colors
+            // Set the theme-overrides textContent to custom style blocks built from our colors
             themeOverrides.textContent =
                 `${this.createCssStyleBlock(":root", this.highliteColors)}
                  \n${this.createCssStyleBlock("#hs-screen-mask, #hs-screen-mask.hs-dark-theme", this.clientColors)}
@@ -296,28 +397,21 @@ class Theme {
         this.recolorFrame();
     }
 
+    /** Returns a Theme based on a name */
     static getByName(name: string): Theme | undefined {
         return Object.values(this.THEMES).find(theme => theme.name === name);
     }
 
-
-    // Gets the value of a key from the highliteColors object
+    /** Gets the value of a key from the highliteColors object */
     getHighlite(key: string): string | undefined {
         return this.highliteColors[key];
     }
 
-    // Gets the value of a key from the clientColors object
-    getClient(key: string): string | undefined {
-        return this.clientColors[key];
-    }
-
-
-    /* Takes a selector string and an object of colors and converts it into a css block*/
+    /* Takes a selector string and an object of colors and converts it into a css block */
     private createCssStyleBlock(selector: String, obj: Record<string, string>): string {
         const lines = Object.entries(obj).map(([key, value]) => `    ${key}: ${value};`);
         return `${selector} {\n${lines.join("\n")}\n}`;
     }
-
 
     /** Recolors the window to match the colors of the selected theme */
     recolorFrame() {
@@ -342,7 +436,7 @@ class Theme {
         });
     }
 
-
+    /** Adjust the brightness of a hex color */
     private static adjustColorBrightness(color: string, factor: number): string {
         // Convert hex to RGB
         let r: number, g: number, b: number;
@@ -370,33 +464,7 @@ class Theme {
         return `rgb(${r}, ${g}, ${b})`;
     }
 
-    private static hexToRgb(hex: string) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return {r, g, b};
-    }
-
-    private static rgbToHex({r, g, b}: { r: number; g: number; b: number }) {
-        const toHex = (c: number) => c.toString(16).padStart(2, "0");
-        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-    }
-
-    private static rgbaToHex(rgba: string, includeAlpha = false): string {
-        const match = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),?\s*([\d.]*)?\)/);
-        if (!match) throw new Error("Invalid rgba format");
-
-        const r = parseInt(match[1], 10);
-        const g = parseInt(match[2], 10);
-        const b = parseInt(match[3], 10);
-        const a = match[4] ? parseFloat(match[4]) : 1;
-
-        const toHex = (n: number) => n.toString(16).padStart(2, "0");
-
-        const alphaHex = Math.round(a * 255);
-        return `#${toHex(r)}${toHex(g)}${toHex(b)}${includeAlpha ? toHex(alphaHex) : ""}`;
-    }
-
+    /** Convert a hex color to an RGBA color */
     private static hexToRgba(hex: string, alpha: number): string {
         const cleanHex = hex.replace("#", "");
         const r = parseInt(cleanHex.slice(0, 2), 16);
