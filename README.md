@@ -4,25 +4,33 @@
 
 # Highlite Plugins Repository
 
-A repository for [Highlite][highlite-website] plugins based on the [Highlite Example Plugin Template][example-plugin-repo]
+A repository for [Highlite][highlite-website] plugins based on
+the [Highlite Example Plugin Template][example-plugin-repo]
 
-<!-- ## Plugins
-
-<details><summary>Example Plugin</summary>
-
----
-
-
+## Plugins
 
 ---
+<details><summary> 
+ClientThemes - Restyle your HighLite client
 
-</details> -->
+--- 
+</summary>
+
+Allows the user to change HighLite and HighSpell themes.<br>
+Supports creation, exporting, and exporting of user-defined themes as well as custom CSS.
+
+<img src="docs/images/clientthemes.png" alt="ClientThemes image" width="720"/><br><br>
+
+---
+</details>
 
 ## Information
 
-<details><summary>Project Structure</summary>
+---
+<details><summary>Project Structure
 
 ---
+</summary>
 
 <div align=left>
 
@@ -57,6 +65,8 @@ Example-Plugin/
 
 </div>
 
+
+
 ---
 
 </details>
@@ -64,6 +74,9 @@ Example-Plugin/
 </div>
 
 [highlite-website]: https://www.highlite.dev/
+
 [highlite-repo]: https://github.com/Highl1te/HighliteDesktop
+
 [core-repo]: https://github.com/Highl1te/Core
+
 [example-plugin-repo]: https://github.com/Highl1te/Example-Plugin
