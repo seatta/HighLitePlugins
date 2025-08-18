@@ -10,13 +10,13 @@ the [Highlite Example Plugin Template][example-plugin-repo]
 ## Plugins
 
 <details><summary> 
-ClientThemes - Restyle your HighLite client
+ClientThemes - Restyle your HighLite client!
 
 --- 
 </summary>
 
-Allows the user to change HighLite and HighSpell themes.<br>
-Supports creation, exporting, and exporting of user-defined themes as well as custom CSS.
+Allows players to change HighLite and HighSpell themes and apply custom CSS.<br>
+Supports importing and exporting of the custom user-defined theme.
 
 <img src="docs/images/clientthemes.png" alt="ClientThemes image" width="720"/><br><br>
 

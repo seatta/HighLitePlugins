@@ -106,7 +106,7 @@ await Promise.all(
                 outfile,
                 format: "esm",
                 plugins: [CSSMinifyPlugin],
-                external: ["@babylonjs/core", "@highlite/core", "SeattaPlugin"],
+                external: ["@babylonjs/core", "@highlite/core"],
                 loader: {
                     ".html": "text",
                     ".png": "dataurl",
