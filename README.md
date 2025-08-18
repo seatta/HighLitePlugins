@@ -1,8 +1,8 @@
 <div align=center>
 
-<img src="docs/images/logo.png" alt="HighLite Logo" width="120"/><br><br>
+<img src="docs/images/logo.png" alt="HighLite Logo" width="120"/>
 
-# Highlite Plugins Repository
+# Seatta's Highlite Plugins
 
 A repository for [Highlite][highlite-website] plugins based on
 the [Highlite Example Plugin Template][example-plugin-repo]
@@ -10,66 +10,22 @@ the [Highlite Example Plugin Template][example-plugin-repo]
 ## Plugins
 
 <details><summary> 
-ClientThemes - Restyle your HighLite client!
+ClientThemes - Restyle HighLite!
 
---- 
 </summary>
 
+---
 Allows players to change HighLite and HighSpell themes and apply custom CSS.<br>
 Supports importing and exporting of the custom user-defined theme.
 
-<img src="docs/images/clientthemes.png" alt="ClientThemes image" width="720"/><br><br>
+<img src="docs/images/plugins/clientthemes.png" alt="ClientThemes image" width="720"/><br><br>
 
 ---
 </details>
 
-## Information
+[//]: # (Insert plugin templates below this)
 
-<details><summary>Project Structure
-
----
-</summary>
-
-<div align=left>
-
-```
-Example-Plugin/
-├── src/
-│   ├── Example-Plugin            # Plugin directory
-│   │   ├── Example-Plugin.ts     # Main plugin class
-│   │   ├── types.d.ts            # Type declarations for static resources
-│   │   ├── package.json          # Plugin configuration
-│   │   └── resources/
-│   │       ├── css/
-│   │       │   └── base.css      # Stylesheet for the plugin
-│   │       ├── html/
-│   │       │   └── html.html     # HTML template
-│   │       ├── images/
-│   │       │   └── image.png     # Example image asset
-│   │       └── sounds/
-│   │           └── sound.mp3     # Exammple audio asset
-│   │
-│   ├── Example-Plugin-2          # Plugin directory
-│   │   └── ...                   # Plugin files
-│   │
-│   └── Example-Plugin-3          # Plugin directory
-│       └── ...                   # Plugin files
-│
-├── package.json                  # Project configuration and dependencies
-├── rollup.config.mjs             # Build configuration
-├── tsconfig.json                 # TypeScript configuration
-└── README.md                     # This file
-```
-
-</div>
-
-
-
----
-
-</details>
-
-</div>
+</div> 
 
 [highlite-website]: https://www.highlite.dev/
 
@@ -78,3 +34,18 @@ Example-Plugin/
 [core-repo]: https://github.com/Highl1te/Core
 
 [example-plugin-repo]: https://github.com/Highl1te/Example-Plugin
+
+[//]: # (Plugin section template)
+<!--- <details><summary>
+PLUGIN NAME - SHORT DESCRIPTION!
+
+</summary>
+
+---
+LONG DESCRIPTION
+
+<img src="docs/images/plugins/IMAGE.png" alt="PLUGIN NAME image" width="720"/><br><br>
+
+---
+</details>
+-->
