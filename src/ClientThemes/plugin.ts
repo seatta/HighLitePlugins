@@ -305,6 +305,24 @@ class Theme {
             "--theme-success": "#40a02b",
             "--theme-danger": "#e64553",
         }),
+        // Based on Dracula: https://draculatheme.com/contribute
+        Dracula: new Theme("Dracula", true, {
+            "--theme-background": "#282A36",
+            "--theme-accent": "#BD93F9",
+            "--theme-text-primary": "#F8F8F2",
+            "--theme-text-dark": "#8BE9FD",
+            "--theme-success": "#50FA7B",
+            "--theme-danger": "#FF5555",
+        }),
+        // Based on Alucard: https://draculatheme.com/contribute
+        Alucard: new Theme("Alucard", false, {
+            "--theme-background": "#FFFBEB",
+            "--theme-accent": "#A34D14",
+            "--theme-text-primary": "#1F1F1F",
+            "--theme-text-dark": "#CFCFDE",
+            "--theme-success": "#14710A",
+            "--theme-danger": "#CB3A2A",
+        }),
         // Based on the Nord palette: https://www.nordtheme.com/docs/colors-and-palettes
         Nord_Dark: new Theme("Nord - Dark", true, {
             "--theme-background": "#2e3440",
@@ -351,7 +369,6 @@ class Theme {
         this.highliteColors["--theme-danger-transparent-30"] = Theme.hexToRgba(this.getProp("--theme-danger")!, .3);
         this.highliteColors["--theme-text-secondary"] = Theme.hexToRgba(this.getProp("--theme-text-primary")!, .8);
         this.highliteColors["--theme-text-muted"] = Theme.hexToRgba(this.getProp("--theme-text-primary")!, .6);
-        this.highliteColors["--theme-text-reversed"] = Theme.adjustColorBrightness(this.getProp("--theme-text-primary")!, this.isDarkModeTheme ? 0.6 : 2);
         this.highliteColors["--theme-background-soft"] = Theme.adjustColorBrightness(this.getProp("--theme-background")!, this.isDarkModeTheme ? 1.05 : 0.95);
         this.highliteColors["--theme-background-mute"] = Theme.adjustColorBrightness(this.getProp("--theme-background")!, this.isDarkModeTheme ? 1.4 : 0.8);
         this.highliteColors["--theme-background-light"] = Theme.adjustColorBrightness(this.getProp("--theme-background")!, this.isDarkModeTheme ? 1.4 : 0.8);
@@ -400,61 +417,87 @@ class Theme {
 
             // Set the client-themes-theme-overrides textContent to custom style block for our theme colors
             themeOverrides.textContent = this.formatCss(`
+                /* HighLite CSS Variable Reassignments */
                 ${this.objectToCssBlock(":root", this.highliteColors)}
+                
+                /* HighSpell CSS Variable Reassignments */
                 ${this.objectToCssBlock("#hs-screen-mask, #hs-screen-mask.hs-dark-theme", this.clientColors)}
                  
-                 .hs-action-bar-item__text {
-                    color: ${this.highliteColors["--theme-text-primary"]};
-                 }
-                 
-                 #warningIndicator .warning-icon.error {
-                    color: ${this.highliteColors["--theme-danger"]} !important;
-                 }
-                 
-                 #warningIndicator .warning-icon.warning {
-                    color: ${this.highliteColors["--theme-accent"]} !important;
-                 }
-                 
-                 #iconbar a:hover .iconify {
-                    color: ${this.highliteColors["--theme-accent"]};
-                 }
-                 
-                 .hs-action-bar-button--selected {
-                    color: ${this.highliteColors["--theme-text-reversed"]};
-                    background-color: ${this.highliteColors["--theme-accent"]};
-                }
-                
-                .hs-action-bar-button--selected:hover {
-                    background-color: ${this.highliteColors["--theme-accent-light"]}
-                }
-                         
+                /* HighSpell yellow Text -- Non-chat */ 
                 .hs-text--yellow:not(.hs-chat-menu__message-text-container) {
                     color: ${this.highliteColors["--theme-accent"]};
                 }                
                 
+                /* HighSpell White Text -- Non-chat */
                 .hs-text--white:not(.hs-chat-menu__message-text-container) {
                     color: ${this.highliteColors["--theme-accent"]};
                 }
+            
+                /* HighSpell Action Bar Item Text */
+                .hs-action-bar-item__text {
+                    color: ${this.highliteColors["--theme-text-primary"]};
+                }
                 
+                /* HighSpell Action Bar Selected */
+                .hs-action-bar-button--selected {
+                    background-color: ${this.highliteColors["--theme-accent"]};
+                }
+                
+                /* HighSpell Action Bar Selected -- Hover */
+                .hs-action-bar-button--selected:hover {
+                    background-color: ${this.highliteColors["--theme-accent-light"]}
+                }
+                
+                /* HighSpell Action Bar Selected Item Text */
+                .hs-action-bar-button--selected .hs-action-bar-item .hs-action-bar-item__text {
+                    color: ${this.highliteColors["--theme-background"]};
+                }
+                
+                /* HighSpell Context Menu Title */
                 .hs-context-menu__title {
                     color: ${this.highliteColors["--theme-text-dark"]};
                 }
                 
+                /* HighSpell Context Menu Item -- Hover */
                 .hs-context-menu__item:hover {
                     color: ${this.highliteColors["--theme-background-mute"]};
                 }
                 
+                /* HighSpell Context Menu Action Name -- Hover */
                 .hs-context-menu__item:hover .hs-context-menu__item__action-name {
                     color: ${this.highliteColors["--theme-accent"]};
-                }                
-                
+                }  
+                              
+                /* HighSpell Context Menu Action Name */
                 .hs-context-menu__item__action-name {
                     color: ${this.highliteColors["--theme-text-primary"]};
                 }
                 
-                .hs-action-bar-button--selected .hs-action-bar-item__text {
-                    color: ${this.highliteColors["--theme-text-reversed"]};
-                }`);
+                /* HighLite Warning Indicator -- Error */
+                #warningIndicator .warning-icon.error {
+                    color: ${this.highliteColors["--theme-danger"]} !important;
+                }
+                
+                /* HighLite Warning Indicator -- Warning */
+                #warningIndicator .warning-icon.warning {
+                    color: ${this.highliteColors["--theme-accent"]} !important;
+                }
+                
+                /* HighLite Title Bar Icons */
+                #iconbar a:hover .iconify {
+                    color: ${this.highliteColors["--theme-accent"]};
+                }
+                
+                /* HighLite Plugin Settings Back Button */
+                #highlite-settings-back-button[style] {
+                    color: ${this.highliteColors["--theme-background"]} !important;
+                }
+                
+                /* HighLite Plugin Settings Buttons */
+                #selectedContentDiv button[style] {
+                    color: ${this.highliteColors["--theme-background"]} !important;
+                }
+            `);
         }
 
         // Recolor the HighLite window frame to match the theme
