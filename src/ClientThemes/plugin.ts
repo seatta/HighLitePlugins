@@ -15,7 +15,7 @@ export default class ClientThemes extends SeattaPlugin {
             options: Object.values(Theme.THEMES).map(theme => theme.name),
             value: "Default",
             callback: () => {
-                document.getElementById("custom-overrides")?.remove();
+                document.getElementById("client-themes-custom-overrides")?.remove();
 
                 const newTheme: Theme | undefined = Theme.getByName(this.settings.CurrentTheme!.value as string);
                 if (newTheme) newTheme.apply();
@@ -204,23 +204,6 @@ export default class ClientThemes extends SeattaPlugin {
     }
 
     /**
-     * Appends a custom style element to <head>
-     *
-     * @param value string -- The style information to set
-     */
-    addCustomCssStyle(value: string) {
-        let customOverrides: HTMLElement | null = document.getElementById("custom-overrides");
-        if (!customOverrides) {
-            customOverrides = document.createElement("style");
-            customOverrides.id = "custom-overrides";
-            document.head.appendChild(customOverrides);
-        }
-
-        // Set the custom-overrides text to custom style blocks built from our colors
-        customOverrides.textContent = `${value}`
-    }
-
-    /**
      * Returns whether the custom theme is currently set
      */
     isCustomThemeSet(): boolean {
@@ -242,24 +225,40 @@ export default class ClientThemes extends SeattaPlugin {
         }
     }
 
+
+    /**
+     * Appends a custom style element to <head>
+     *
+     * @param value string -- The style information to set
+     */
+    addCustomCssStyle(value: string) {
+        let customOverrides: HTMLElement | null = document.getElementById("client-themes-custom-overrides");
+        if (!customOverrides) {
+            customOverrides = document.createElement("style");
+            customOverrides.id = "client-themes-custom-overrides";
+            document.head.appendChild(customOverrides);
+        }
+
+        // Set the client-themes-custom-overrides text to custom style blocks built from our colors
+        customOverrides.textContent = value
+    }
+
     override init(): void {
         this.log("Initialized")
+        this.error("aah");
     }
 
     override start(): void {
         this.log("Started Theme Switcher");
         this.populateCustomTheme();
-        const newTheme: Theme = (Theme.getByName(this.settings.CurrentTheme!.value as string) || Theme.getByName("Default")!);
-        newTheme.apply()
+        (Theme.getByName(this.settings.CurrentTheme!.value as string) || Theme.getByName("Default")!).apply();
         this.addCustomCssStyle(this.settings.customCSS!.value as string)
     }
 
     override stop(): void {
         this.log("Stopped Theme Switcher")
-
-        let defaultTheme = Theme.getByName("Default")!;
-        defaultTheme.apply()
-        document.getElementById("custom-overrides")?.remove();
+        Theme.getByName("Default")!.apply();
+        document.getElementById("client-themes-custom-overrides")?.remove();
     }
 }
 
@@ -275,7 +274,7 @@ class Theme {
     }
 
     static readonly THEMES: Record<string, Theme> = {
-        // The default HighLite theme - Colors don't need to be defined since we'll remove the .theme-overrides element
+        // The default HighLite theme - Colors don't need to be defined since we'll remove the .client-themes-theme-overrides element
         Default: new Theme("Default", true),
         Catppuccin_Dark: new Theme("Catppuccin - Dark", true, {
             "--theme-background": "#303446",
@@ -302,29 +301,29 @@ class Theme {
      */
     calculateHighliteColorShades() {
         if (this.name === "Default") return;
-        this.highliteColors["--theme-accent-muted"] = Theme.hexToRgba(this.getHighlite("--theme-accent")!, .8);
-        this.highliteColors["--theme-accent-transparent-10"] = Theme.hexToRgba(this.getHighlite("--theme-accent")!, .1);
-        this.highliteColors["--theme-accent-transparent-20"] = Theme.hexToRgba(this.getHighlite("--theme-accent")!, .2);
-        this.highliteColors["--theme-accent-transparent-30"] = Theme.hexToRgba(this.getHighlite("--theme-accent")!, .3);
-        this.highliteColors["--theme-accent-transparent-40"] = Theme.hexToRgba(this.getHighlite("--theme-accent")!, .4);
-        this.highliteColors["--theme-accent-transparent-60"] = Theme.hexToRgba(this.getHighlite("--theme-accent")!, .6);
-        this.highliteColors["--theme-success-transparent-30"] = Theme.hexToRgba(this.getHighlite("--theme-success")!, .3);
-        this.highliteColors["--theme-danger-transparent-30"] = Theme.hexToRgba(this.getHighlite("--theme-danger")!, .3);
-        this.highliteColors["--theme-text-secondary"] = Theme.hexToRgba(this.getHighlite("--theme-text-primary")!, .8);
-        this.highliteColors["--theme-text-muted"] = Theme.hexToRgba(this.getHighlite("--theme-text-primary")!, .6);
-        this.highliteColors["--theme-text-reversed"] = Theme.adjustColorBrightness(this.getHighlite("--theme-text-primary")!, this.isDarkModeTheme ? 0.6 : 2);
-        this.highliteColors["--theme-background-soft"] = Theme.adjustColorBrightness(this.getHighlite("--theme-background")!, this.isDarkModeTheme ? 1.05 : 0.95);
-        this.highliteColors["--theme-background-mute"] = Theme.adjustColorBrightness(this.getHighlite("--theme-background")!, this.isDarkModeTheme ? 1.4 : 0.8);
-        this.highliteColors["--theme-background-light"] = Theme.adjustColorBrightness(this.getHighlite("--theme-background")!, this.isDarkModeTheme ? 1.4 : 0.8);
-        this.highliteColors["--theme-accent-dark"] = Theme.adjustColorBrightness(this.getHighlite("--theme-accent")!, this.isDarkModeTheme ? 0.8 : 1.2);
-        this.highliteColors["--theme-accent-light"] = Theme.adjustColorBrightness(this.getHighlite("--theme-accent")!, this.isDarkModeTheme ? 1.2 : 0.8);
-        this.highliteColors["--theme-success-dark"] = Theme.adjustColorBrightness(this.getHighlite("--theme-success")!, this.isDarkModeTheme ? 0.8 : 1.2);
-        this.highliteColors["--theme-success-light"] = Theme.adjustColorBrightness(this.getHighlite("--theme-success")!, this.isDarkModeTheme ? 1.2 : 0.8);
-        this.highliteColors["--theme-danger-dark"] = Theme.adjustColorBrightness(this.getHighlite("--theme-danger")!, this.isDarkModeTheme ? 0.8 : 1.2);
-        this.highliteColors["--theme-danger-light"] = Theme.adjustColorBrightness(this.getHighlite("--theme-danger")!, this.isDarkModeTheme ? 1.2 : 0.8);
-        this.highliteColors["--theme-border"] = Theme.hexToRgba(this.getHighlite("--theme-accent")!, 0.1)
-        this.highliteColors["--theme-border-light"] = Theme.hexToRgba(this.getHighlite("--theme-border")!, 0.05)
-        this.highliteColors["--theme-divider"] = Theme.hexToRgba(this.getHighlite("--theme-accent")!, 0.15)
+        this.highliteColors["--theme-accent-muted"] = Theme.hexToRgba(this.getProp("--theme-accent")!, .8);
+        this.highliteColors["--theme-accent-transparent-10"] = Theme.hexToRgba(this.getProp("--theme-accent")!, .1);
+        this.highliteColors["--theme-accent-transparent-20"] = Theme.hexToRgba(this.getProp("--theme-accent")!, .2);
+        this.highliteColors["--theme-accent-transparent-30"] = Theme.hexToRgba(this.getProp("--theme-accent")!, .3);
+        this.highliteColors["--theme-accent-transparent-40"] = Theme.hexToRgba(this.getProp("--theme-accent")!, .4);
+        this.highliteColors["--theme-accent-transparent-60"] = Theme.hexToRgba(this.getProp("--theme-accent")!, .6);
+        this.highliteColors["--theme-success-transparent-30"] = Theme.hexToRgba(this.getProp("--theme-success")!, .3);
+        this.highliteColors["--theme-danger-transparent-30"] = Theme.hexToRgba(this.getProp("--theme-danger")!, .3);
+        this.highliteColors["--theme-text-secondary"] = Theme.hexToRgba(this.getProp("--theme-text-primary")!, .8);
+        this.highliteColors["--theme-text-muted"] = Theme.hexToRgba(this.getProp("--theme-text-primary")!, .6);
+        this.highliteColors["--theme-text-reversed"] = Theme.adjustColorBrightness(this.getProp("--theme-text-primary")!, this.isDarkModeTheme ? 0.6 : 2);
+        this.highliteColors["--theme-background-soft"] = Theme.adjustColorBrightness(this.getProp("--theme-background")!, this.isDarkModeTheme ? 1.05 : 0.95);
+        this.highliteColors["--theme-background-mute"] = Theme.adjustColorBrightness(this.getProp("--theme-background")!, this.isDarkModeTheme ? 1.4 : 0.8);
+        this.highliteColors["--theme-background-light"] = Theme.adjustColorBrightness(this.getProp("--theme-background")!, this.isDarkModeTheme ? 1.4 : 0.8);
+        this.highliteColors["--theme-accent-dark"] = Theme.adjustColorBrightness(this.getProp("--theme-accent")!, this.isDarkModeTheme ? 0.8 : 1.2);
+        this.highliteColors["--theme-accent-light"] = Theme.adjustColorBrightness(this.getProp("--theme-accent")!, this.isDarkModeTheme ? 1.2 : 0.8);
+        this.highliteColors["--theme-success-dark"] = Theme.adjustColorBrightness(this.getProp("--theme-success")!, this.isDarkModeTheme ? 0.8 : 1.2);
+        this.highliteColors["--theme-success-light"] = Theme.adjustColorBrightness(this.getProp("--theme-success")!, this.isDarkModeTheme ? 1.2 : 0.8);
+        this.highliteColors["--theme-danger-dark"] = Theme.adjustColorBrightness(this.getProp("--theme-danger")!, this.isDarkModeTheme ? 0.8 : 1.2);
+        this.highliteColors["--theme-danger-light"] = Theme.adjustColorBrightness(this.getProp("--theme-danger")!, this.isDarkModeTheme ? 1.2 : 0.8);
+        this.highliteColors["--theme-border"] = Theme.hexToRgba(this.getProp("--theme-accent")!, 0.1)
+        this.highliteColors["--theme-border-light"] = Theme.hexToRgba(this.getProp("--theme-border")!, 0.05)
+        this.highliteColors["--theme-divider"] = Theme.hexToRgba(this.getProp("--theme-accent")!, 0.15)
     }
 
     /**
@@ -337,14 +336,14 @@ class Theme {
             "--hs-color-menu-bg": Theme.hexToRgba(this.highliteColors["--theme-background"]!, 0.9),
             "--hs-color-menu-border": this.highliteColors["--theme-accent"]!,
             "--hs-color-overlay-menu-bg": Theme.hexToRgba(this.highliteColors["--theme-background"]!, 0.8),
-            "--hs-color-menu-header-fg": this.getHighlite("--theme-text-primary")!,
-            "--hs-color-inventory-item-amount-bg": this.getHighlite("--theme-background-light")!,
+            "--hs-color-menu-header-fg": this.getProp("--theme-text-primary")!,
+            "--hs-color-inventory-item-amount-bg": this.getProp("--theme-background-light")!,
         };
     }
 
     /** Applies the theme by appending it as a style element to <head>*/
     apply() {
-        let themeOverrides: HTMLElement | null = document.getElementById("theme-overrides");
+        let themeOverrides: HTMLElement | null = document.getElementById("client-themes-theme-overrides");
 
         if (this.name === "Default") {
             themeOverrides?.remove();
@@ -353,15 +352,20 @@ class Theme {
             this.clientColors = this.getClientColorsFromHighliteColors();
             if (!themeOverrides) {
                 themeOverrides = document.createElement("style");
-                themeOverrides.id = "theme-overrides";
+                themeOverrides.id = "client-themes-theme-overrides";
                 document.head.appendChild(themeOverrides);
             }
 
-            // Set the theme-overrides textContent to custom style blocks built from our colors
+            // Set the client-themes-theme-overrides textContent to custom style blocks built from our colors
+            // TODO: Override more HighSpell client styles
+
             themeOverrides.textContent =
                 `${this.createCssStyleBlock(":root", this.highliteColors)}
                  \n${this.createCssStyleBlock("#hs-screen-mask, #hs-screen-mask.hs-dark-theme", this.clientColors)}
                  \n${this.createCssStyleBlock(".hs-action-bar-item__text", {"color": this.highliteColors["--theme-text-primary"]})}
+                 \n${this.createCssStyleBlock("#warningIndicator .warning-icon.error", {"color": (this.highliteColors["--theme-danger"] + ' !important')})}
+                 \n${this.createCssStyleBlock("#warningIndicator .warning-icon.warning", {"color": (this.highliteColors["--theme-accent"] + ' !important')})}
+                 \n${this.createCssStyleBlock("#iconbar a:hover .iconify", {"color": this.highliteColors["--theme-accent"]})}
                  \n${this.createCssStyleBlock(".hs-action-bar-button--selected", {
                     "color": this.highliteColors["--theme-text-reversed"],
                     "background-color": this.highliteColors["--theme-accent"]
@@ -403,7 +407,7 @@ class Theme {
     }
 
     /** Gets the value of a key from the highliteColors object */
-    getHighlite(key: string): string | undefined {
+    private getProp(key: string): string | undefined {
         return this.highliteColors[key];
     }
 
@@ -418,10 +422,11 @@ class Theme {
         const mainFrame: HTMLElement = document.getElementById("main")!;
         const bodyContainer: HTMLElement = document.getElementById("body-container")!;
 
-        let barColor = this.name !== "Default" ? this.getHighlite("--theme-background")! : "#141414";
-        let textColor = this.name !== "Default" ? this.getHighlite("--theme-text-primary")! : "#fff";
+        let barColor = this.name !== "Default" ? this.getProp("--theme-background")! : "#141414";
+        let textColor = this.name !== "Default" ? this.getProp("--theme-text-primary")! : "#fff";
 
         let titleBar = bodyContainer.querySelector<HTMLElement>(".highlite_titlebar")!
+
         titleBar.style.background = barColor;
         titleBar.style.color = textColor;
 
