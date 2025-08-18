@@ -245,7 +245,6 @@ export default class ClientThemes extends SeattaPlugin {
 
     override init(): void {
         this.log("Initialized")
-        this.error("aah");
     }
 
     override start(): void {
