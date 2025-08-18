@@ -15,7 +15,7 @@ export default class ClientThemes extends SeattaPlugin {
             options: Object.values(Theme.THEMES).map(theme => theme.name),
             value: "Default",
             callback: () => {
-                document.getElementById("client-themes-custom-overrides")?.remove();
+                document.getElementById("client-themes-css-overrides")?.remove();
 
                 const newTheme: Theme | undefined = Theme.getByName(this.settings.CurrentTheme!.value as string);
                 if (newTheme) newTheme.apply();
@@ -225,21 +225,20 @@ export default class ClientThemes extends SeattaPlugin {
         }
     }
 
-
     /**
      * Appends a custom style element to <head>
      *
      * @param value string -- The style information to set
      */
     addCustomCssStyle(value: string) {
-        let customOverrides: HTMLElement | null = document.getElementById("client-themes-custom-overrides");
+        let customOverrides: HTMLElement | null = document.getElementById("client-themes-css-overrides");
         if (!customOverrides) {
             customOverrides = document.createElement("style");
-            customOverrides.id = "client-themes-custom-overrides";
+            customOverrides.id = "client-themes-css-overrides";
             document.head.appendChild(customOverrides);
         }
 
-        // Set the client-themes-custom-overrides text to custom style blocks built from our colors
+        // Set the client-themes-css-overrides text to custom style blocks built from our colors
         customOverrides.textContent = value
     }
 
@@ -257,7 +256,7 @@ export default class ClientThemes extends SeattaPlugin {
     override stop(): void {
         this.log("Stopped Theme Switcher")
         Theme.getByName("Default")!.apply();
-        document.getElementById("client-themes-custom-overrides")?.remove();
+        document.getElementById("client-themes-css-overrides")?.remove();
     }
 }
 
@@ -273,23 +272,65 @@ class Theme {
     }
 
     static readonly THEMES: Record<string, Theme> = {
+        /** When defining a theme 6 colors are required
+         * --theme-background:      The background color
+         * --theme-accent:          The accent color
+         * --theme-text-primary:    The main text color
+         * --theme-text-dark:       The alternate text color. Even though it is labeled -dark,
+         *                              it should be brighter for dark themes, and darker for light themes
+         * --theme-success:         I'm not sure what this color is for yet, I added it just because
+         * --theme-danger:          As far as I've noticed, this is only used for the warning indicator for the log
+         *
+         * This plugin will automatically override the rest of the highlite css variables based on the ones we defined.
+         * That way, we don't need to define ~25 color variables per theme :)
+         */
+
         // The default HighLite theme - Colors don't need to be defined since we'll remove the .client-themes-theme-overrides element
         Default: new Theme("Default", true),
+        // Based on Catppuccin Macchiato: https://catppuccin.com/palette/
         Catppuccin_Dark: new Theme("Catppuccin - Dark", true, {
             "--theme-background": "#303446",
             "--theme-accent": "#c6a0f6",
             "--theme-text-primary": "#cad3f5",
-            "--theme-text-dark": "#494d64",
+            "--theme-text-dark": "#91d7e3",
             "--theme-success": "#a6da95",
             "--theme-danger": "#ed8796",
         }),
+        // Based on Catppuccin Latte: https://catppuccin.com/palette/
         Catppuccin_Light: new Theme("Catppuccin - Light", false, {
             "--theme-background": "#eff1f5",
             "--theme-accent": "#1e66f5",
             "--theme-text-primary": "#4c4f69",
-            "--theme-text-dark": "#9ca0b0",
+            "--theme-text-dark": "#04a5e5",
             "--theme-success": "#40a02b",
             "--theme-danger": "#e64553",
+        }),
+        // Based on the Nord palette: https://www.nordtheme.com/docs/colors-and-palettes
+        Nord_Dark: new Theme("Nord - Dark", true, {
+            "--theme-background": "#2e3440",
+            "--theme-accent": "#88c0d0",
+            "--theme-text-primary": "#eceff4",
+            "--theme-text-dark": "#81a1c1",
+            "--theme-success": "#a3be8c",
+            "--theme-danger": "#d08770",
+        }),
+        // Based on the Nord palette: https://www.nordtheme.com/docs/colors-and-palettes
+        Nord_Light: new Theme("Nord - Light", false, {
+            "--theme-background": "#d8dee9",
+            "--theme-accent": "#5e81ac",
+            "--theme-text-primary": "#2e3440",
+            "--theme-text-dark": "#88c0d0",
+            "--theme-success": "#a3be8c",
+            "--theme-danger": "#bf616a",
+        }),
+        // Based on Puffball-6 by polyphrog: https://lospec.com/palette-list/puffball-6
+        Puffball_6: new Theme("Puffball-6", false, {
+            "--theme-background": "#eedbc8",
+            "--theme-accent": "#548b71",
+            "--theme-text-primary": "#5a473e",
+            "--theme-text-dark": "#e0bb68",
+            "--theme-success": "#97b34e",
+            "--theme-danger": "#d58353"
         }),
         Custom: new Theme("Custom", false)
     };
@@ -326,12 +367,14 @@ class Theme {
     }
 
     /**
-     * Returns a ThemeColors object of clientColors based on highliteColors
-     * This is used to override client color variables
+     * Returns a ThemeColors object of clientColors based on highliteColors.
+     *
+     * This is where we override HighSpell css variables from: <br>
+     * https://highspell.com/css/game.11.css
      */
     getClientColorsFromHighliteColors(): ThemeColors {
         return {
-            "color": this.highliteColors["--theme-accent"],
+            "color": this.highliteColors["--theme-text-primary"],
             "--hs-color-menu-bg": Theme.hexToRgba(this.highliteColors["--theme-background"]!, 0.9),
             "--hs-color-menu-border": this.highliteColors["--theme-accent"]!,
             "--hs-color-overlay-menu-bg": Theme.hexToRgba(this.highliteColors["--theme-background"]!, 0.8),
@@ -355,49 +398,100 @@ class Theme {
                 document.head.appendChild(themeOverrides);
             }
 
-            // Set the client-themes-theme-overrides textContent to custom style blocks built from our colors
-            // TODO: Override more HighSpell client styles
-
-            themeOverrides.textContent =
-                `${this.createCssStyleBlock(":root", this.highliteColors)}
-                 \n${this.createCssStyleBlock("#hs-screen-mask, #hs-screen-mask.hs-dark-theme", this.clientColors)}
-                 \n${this.createCssStyleBlock(".hs-action-bar-item__text", {"color": this.highliteColors["--theme-text-primary"]})}
-                 \n${this.createCssStyleBlock("#warningIndicator .warning-icon.error", {"color": (this.highliteColors["--theme-danger"] + ' !important')})}
-                 \n${this.createCssStyleBlock("#warningIndicator .warning-icon.warning", {"color": (this.highliteColors["--theme-accent"] + ' !important')})}
-                 \n${this.createCssStyleBlock("#iconbar a:hover .iconify", {"color": this.highliteColors["--theme-accent"]})}
-                 \n${this.createCssStyleBlock(".hs-action-bar-button--selected", {
-                    "color": this.highliteColors["--theme-text-reversed"],
-                    "background-color": this.highliteColors["--theme-accent"]
-                })}
-                 \n${this.createCssStyleBlock(".hs-action-bar-button--selected:hover", {
-                    "background-color": this.highliteColors["--theme-accent-light"]
-                })}
-                 \n${this.createCssStyleBlock(".hs-text--yellow:not(.hs-chat-menu__message-text-container)", {
-                    "color": this.highliteColors["--theme-accent"]
-                })}
-                \n${this.createCssStyleBlock(".hs-text--white:not(.hs-chat-menu__message-text-container)", {
-                    "color": this.highliteColors["--theme-accent"]
-                })}
-                 \n${this.createCssStyleBlock("hs-chat-menu__message-text-container", {
-                    "color": this.isDarkModeTheme ? this.highliteColors["--theme-text-primary"] : this.highliteColors["--theme-text-reversed"]
-                })}
-                \n${this.createCssStyleBlock(".hs-context-menu__item:hover", {
-                    "color": this.highliteColors["--theme-background-mute"]
-                })}
-                \n${this.createCssStyleBlock(".hs-context-menu__item:hover .hs-context-menu__item__action-name", {
-                    "color": this.highliteColors["--theme-accent"]
-                })}
-                \n${this.createCssStyleBlock("hs-context-menu__item__action-name", {
-                    "color": this.highliteColors["--theme-text-primary"]
-                })}
-                \n${this.createCssStyleBlock(".hs-action-bar-button--selected .hs-action-bar-item__text", {
-                    "color": this.highliteColors["--theme-text-reversed"]
-                })}`;
-
+            // Set the client-themes-theme-overrides textContent to custom style block for our theme colors
+            themeOverrides.textContent = this.formatCss(`
+                ${this.objectToCssBlock(":root", this.highliteColors)}
+                ${this.objectToCssBlock("#hs-screen-mask, #hs-screen-mask.hs-dark-theme", this.clientColors)}
+                 
+                 .hs-action-bar-item__text {
+                    color: ${this.highliteColors["--theme-text-primary"]};
+                 }
+                 
+                 #warningIndicator .warning-icon.error {
+                    color: ${this.highliteColors["--theme-danger"]} !important;
+                 }
+                 
+                 #warningIndicator .warning-icon.warning {
+                    color: ${this.highliteColors["--theme-accent"]} !important;
+                 }
+                 
+                 #iconbar a:hover .iconify {
+                    color: ${this.highliteColors["--theme-accent"]};
+                 }
+                 
+                 .hs-action-bar-button--selected {
+                    color: ${this.highliteColors["--theme-text-reversed"]};
+                    background-color: ${this.highliteColors["--theme-accent"]};
+                }
+                
+                .hs-action-bar-button--selected:hover {
+                    background-color: ${this.highliteColors["--theme-accent-light"]}
+                }
+                         
+                .hs-text--yellow:not(.hs-chat-menu__message-text-container) {
+                    color: ${this.highliteColors["--theme-accent"]};
+                }                
+                
+                .hs-text--white:not(.hs-chat-menu__message-text-container) {
+                    color: ${this.highliteColors["--theme-accent"]};
+                }
+                
+                .hs-context-menu__title {
+                    color: ${this.highliteColors["--theme-text-dark"]};
+                }
+                
+                .hs-context-menu__item:hover {
+                    color: ${this.highliteColors["--theme-background-mute"]};
+                }
+                
+                .hs-context-menu__item:hover .hs-context-menu__item__action-name {
+                    color: ${this.highliteColors["--theme-accent"]};
+                }                
+                
+                .hs-context-menu__item__action-name {
+                    color: ${this.highliteColors["--theme-text-primary"]};
+                }
+                
+                .hs-action-bar-button--selected .hs-action-bar-item__text {
+                    color: ${this.highliteColors["--theme-text-reversed"]};
+                }`);
         }
 
         // Recolor the HighLite window frame to match the theme
         this.recolorFrame();
+    }
+
+    /**
+     * Takes in a string of CSS and returns it formatted
+     * @param cssString string -- The string to format
+     * @return Formatted cssString
+     */
+    private formatCss(cssString: string): string {
+        let indentLevel = 0;
+        const indent = () => " ".repeat(4 * indentLevel);
+
+        return cssString
+            // normalize spacing around braces/semicolons
+            .replace(/\s*{\s*/g, " {\n")
+            .replace(/\s*}\s*/g, "\n}\n")
+            .replace(/\s*;\s*/g, ";\n")
+            // split into lines
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean)
+            .map((line) => {
+                if (line === "}") {
+                    indentLevel = Math.max(0, indentLevel - 1);
+                    return indent() + line;
+                }
+                const out = indent() + line;
+                if (line.endsWith("{")) indentLevel++;
+                return out;
+            })
+            .join("\n")
+            // add a blank line between rules
+            .replace(/}\n(?=\S)/g, "}\n\n")
+            .trim();
     }
 
     /** Returns a Theme based on a name */
@@ -411,7 +505,7 @@ class Theme {
     }
 
     /* Takes a selector string and an object of colors and converts it into a css block */
-    private createCssStyleBlock(selector: String, obj: Record<string, string>): string {
+    private objectToCssBlock(selector: String, obj: Record<string, string>): string {
         const lines = Object.entries(obj).map(([key, value]) => `    ${key}: ${value};`);
         return `${selector} {\n${lines.join("\n")}\n}`;
     }
@@ -422,7 +516,7 @@ class Theme {
         const bodyContainer: HTMLElement = document.getElementById("body-container")!;
 
         let barColor = this.name !== "Default" ? this.getProp("--theme-background")! : "#141414";
-        let textColor = this.name !== "Default" ? this.getProp("--theme-text-primary")! : "#fff";
+        let textColor = this.name !== "Default" ? this.getProp("--theme-text-primary")! : "#ffffff";
 
         let titleBar = bodyContainer.querySelector<HTMLElement>(".highlite_titlebar")!
 
