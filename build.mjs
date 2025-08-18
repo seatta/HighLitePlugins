@@ -92,7 +92,7 @@ await Promise.all(
         // It will be bundled with any plugins that need it
         if (name.includes("SeattaPlugin")) return
 
-        let outName = `_${name.toLowerCase()}.js`;
+        let outName = `${name.toLowerCase()}.js`;
 
 
         const outfile = path.join(outDir, outName);
