@@ -2,7 +2,7 @@
 
 <img src="docs/images/logo.png" alt="HighLite Logo" width="120"/>
 
-# Seatta's Highlite Plugins
+# Seatta's HighLite Plugins
 
 A repository for [Highlite][highlite-website] plugins based on
 the [Highlite Example Plugin Template][example-plugin-repo]
