@@ -5,7 +5,7 @@ import {
     UIManager,
 } from "@highlite/core";
 
-// Experimental superclass for my plugins!
+// Superclass for my plugins! This class is bundled with any plugin that extends it and imports it with a relative path.
 export default abstract class SeattaPlugin extends Plugin {
     abstract override pluginName: string;
     author: string = "Seatta";
@@ -15,19 +15,26 @@ export default abstract class SeattaPlugin extends Plugin {
     uim: UIManager = new UIManager();
 
     // Variables
-    // Colors - Based on the dracula theme: https://draculatheme.com/contribute
-    COLORS = {
-        darkGray: "RGB(40, 42, 54)",
-        blue: "RGB(98, 114, 164)",
-        gray: "RGB(68, 71, 90)",
-        white: "RGB(248, 248, 242)",
-        red: "RGB(255, 85, 85)",
-        orange: "RGB(255, 184, 108)",
-        yellow: "RGB(241, 250, 140)",
-        green: "RGB(80, 250, 123)",
-        cyan: "RGB(139, 233, 253)",
-        purple: "RGB(189, 147, 249)",
-        pink: "RGB(255, 121, 198)"
+    // CSS color variables to use for theming
+    css = {
+        bg: "var(--theme-background)",
+        bg_soft: "var(--theme-background-soft)",
+        bg_muted: "var(--theme-background-mute)",
+        bg_light: "var(--theme-background-light)",
+        accent: "var(--theme-accent)",
+        accent_dark: "var(--theme-accent-dark)",
+        accent_light: "var(--theme-accent-light)",
+        accent_muted: "var(--theme-accent-muted)",
+        fg: "var(--theme-text-primary)",
+        fg_sec: "var(--theme-text-secondary)",
+        fg_dark: "var(--theme-text-dark)",
+        fg_muted: "var(--theme-text-muted)",
+        success: "var(--theme-success)",
+        success_light: "var(--theme-success-light)",
+        success_dark: "var(--theme-success-dark)",
+        danger: "var(--theme-danger)",
+        danger_light: "var(--theme-danger-light)",
+        danger_dark: "var(--theme-danger-dark)"
     }
 
     // State functions
