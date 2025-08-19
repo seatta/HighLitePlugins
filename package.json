@@ -3,7 +3,7 @@
         "node": ">=22.0.0"
     },
     "devDependencies": {
-        "@highlite/core": "^1.0.15",
+        "@highlite/core": "^2.1.1",
         "esbuild": "^0.25.8",
         "typescript": "^5.8.3"
     },
