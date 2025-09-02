@@ -223,11 +223,11 @@ export default class ClientThemes extends SeattaPlugin {
 
                     const darkCheckbox = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')[0];
                     darkCheckbox.checked = themeData.isDarkMode;
-                    darkCheckbox.dispatchEvent(new Event('change'), { bubbles: true });
+                    darkCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
 
                     const colorInputs = container.querySelectorAll<HTMLInputElement>('input[type="color"]');
                     for (let i = 0; i < colorInputs.length; i++) {
-                        colorInputs[i].value = themeData[colorVariables[i]];
+                        colorInputs[i].value = themeData[colorVariables[i]] as string;
                         colorInputs[i].dispatchEvent(new Event('change', { bubbles: true }));
                     }
 
@@ -327,8 +327,6 @@ export default class ClientThemes extends SeattaPlugin {
 }
 
 class Theme {
-    private static currentTheme: Theme;
-
     private clientColors: ThemeData = {};
     highliteColors: ThemeData;
     isDarkModeTheme: boolean;
@@ -531,7 +529,6 @@ class Theme {
 
         // Recolor the HighLite window frame to match the theme
         this.recolorFrame();
-        this.currentTheme = this;
     }
 
     /** Creates a formatted style tag of css based on the theme */
